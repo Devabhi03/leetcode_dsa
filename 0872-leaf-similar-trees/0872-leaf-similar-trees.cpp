@@ -11,25 +11,49 @@
  */
 class Solution {
 public:
-    void inorder(TreeNode* root, vector<int>& ans) {
-        if (root == NULL) {
+    bool leafSimilar(TreeNode* root1, TreeNode* root2) {
+        std::vector<int> nodeList_root1, nodeList_root2;
+        findLeaf_dfs(root1, nodeList_root1);
+        findLeaf_dfs(root2, nodeList_root2);
+        return nodeList_root1 == nodeList_root2;
+    }
+
+    void findLeaf_dfs(TreeNode* nodeNow, std::vector<int>& nodeList) {
+        if (!nodeNow) {
             return;
         }
-        inorder(root->left, ans);
-        if (!root->left && !root->right) {
-            ans.push_back(root->val);
+
+        if (!nodeNow->left && !nodeNow->right) {
+            nodeList.push_back(nodeNow->val);
+            return;
         }
-        inorder(root->right, ans);
-    }
-    bool leafSimilar(TreeNode* root1, TreeNode* root2) {
-        vector<int> ans1;
-        vector<int> ans2;
-        inorder(root1, ans1);
-        inorder(root2, ans2);
 
-        if (ans1 == ans2)
-            return true;
-
-        return false;
+        findLeaf_dfs(nodeNow->left, nodeList);
+        findLeaf_dfs(nodeNow->right, nodeList);
     }
 };
+/*
+class Solution:
+    def leafSimilar(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        
+        def findLeaf_dfs(nodeNow, nodeList):
+            if not nodeNow:
+                return False
+    
+            leftExist  = findLeaf_dfs(nodeNow.left, nodeList)
+            rightExist = findLeaf_dfs(nodeNow.right, nodeList)
+
+            if not leftExist and not rightExist:
+                nodeList.append(nodeNow.val)
+
+            return True
+            
+        nodeList_root1, nodeList_root2 = [], []
+        findLeaf_dfs(root1, nodeList_root1)
+        findLeaf_dfs(root2, nodeList_root2)
+
+        if nodeList_root1 == nodeList_root2:
+            return True
+        else:
+            return False
+*/
