@@ -4,6 +4,7 @@ using namespace std;
 
 // } Driver Code Ends
 
+
 class Solution {
   public:
     string longestSubstring(string s, int n) {
@@ -37,6 +38,7 @@ class Solution {
         return ans == "" ? "-1" : ans;
     }
 };
+
 
 
 
