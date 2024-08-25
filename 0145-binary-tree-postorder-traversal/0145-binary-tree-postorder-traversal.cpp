@@ -11,19 +11,13 @@
  */
 class Solution {
 public:
-    vector<int> arr;
-    void aman(TreeNode* root){
-        if(root==NULL) return;
-        aman(root->left);
-        aman(root->right);
-        arr.push_back(root->val);
-
-    }
+    vector<int> num={};
     vector<int> postorderTraversal(TreeNode* root) {
-        aman(root);
-        return arr;
-
-
-
+        if (root==nullptr)
+            return num;
+        postorderTraversal(root->left);
+        postorderTraversal(root->right);
+        num.push_back(root->val);
+        return num;
     }
 };
