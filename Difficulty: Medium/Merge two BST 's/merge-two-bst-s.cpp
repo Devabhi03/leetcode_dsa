@@ -96,44 +96,51 @@ class Solution {
   public:
     // Function to return a list of integers denoting the node
     // values of both the BST in a sorted order.
-    void inorder(Node* root, vector<int>& vec){
-        if(root==NULL)
+    void inorderTraversal(Node* root, vector<int>& arr){
+        if(!root){
             return;
-        inorder(root->left, vec);
-        vec.push_back(root->data);
-        inorder(root->right, vec);
+        }
+        inorderTraversal(root->left,arr);
+        arr.push_back(root->data);
+        inorderTraversal(root->right,arr);
     }
-    // Function to return a list of integers denoting the node
-    // values of both the BST in a sorted order.
-    vector<int> merge(Node *root1, Node *root2) {
-        // Your code here
-        vector<int> bs1;
-        vector<int> bs2;
-        vector<int> ans;
-        inorder(root1, bs1);
-        inorder(root2, bs2);
-        int n = bs1.size();
-        int m = bs2.size();
-        int i =0, j = 0;
-        while(i<n && j<m){
-            if(bs1[i] > bs2[j]){
-                ans.push_back(bs2[j]);
+    
+    vector<int> mergeTwoSortedArray(vector<int> arr1,vector<int> arr2){
+        vector<int> temp;
+        
+        int i=0,j=0;
+        
+        while(i<arr1.size() && j<arr2.size()){
+            if(arr1[i]<=arr2[j]){
+                temp.push_back(arr1[i]);
+                i++;
+            }else{
+                temp.push_back(arr2[j]);
                 j++;
             }
-            else{
-                ans.push_back(bs1[i]);
-                i++;
-            }
         }
-        while(i<n){
-            ans.push_back(bs1[i]);
+        
+        while(i<arr1.size()){
+            temp.push_back(arr1[i]);
             i++;
         }
-        while(j<m){
-            ans.push_back(bs2[j]);
+        while(j<arr2.size()){
+            temp.push_back(arr2[j]);
             j++;
         }
-        return ans;
+        return temp;
+    }
+    
+    
+    
+    vector<int> merge(Node *root1, Node *root2) {
+        // Your code here
+        vector<int> arr1;
+        vector<int> arr2;
+        inorderTraversal(root1,arr1);
+        inorderTraversal(root2,arr2);
+        
+        return mergeTwoSortedArray(arr1,arr2);
     }
 };
 
