@@ -6,53 +6,52 @@ using namespace std;
 // } Driver Code Ends
 class Solution {
   public:
-    vector<int> spirallyTraverse(vector<vector<int> > &m) {
-        int u=0,d=m.size()-1,l=0,r=m[0].size()-1;
-        bool H=true,F=true;
-        vector<int> ans;
-        while(u<=d && l<=r)
-        {
-            if(H)
-            {
-                if(F)
-                {
-                    // going right
-                    for(int i=l;i<=r;i++) ans.push_back(m[u][i]);
-                    u++;
-                    H=false;
-                }
-                else
-                {
-                    // going left
-                    for(int i=r;i>=l;i--) ans.push_back(m[d][i]);
-                    d--;
-                    H=false;
-                }
+    vector<int> spirallyTraverse(vector<vector<int> > &mat) {
+        // code here
+
+vector<int> ans;
+        int row = mat.size();
+        int col = mat[0].size();
+        
+        int count = 0;
+        int total = row*col;
+        
+        
+        // index initialization
+        int startingRow = 0;
+        int endingRow = row-1;
+        int startingCol = 0;
+        int endingCol = col-1;
+        
+        while(count < total){
+            // print starting row
+            for(int i= startingCol; count < total && i <= endingCol; i++){
+                ans.push_back(mat[startingRow][i]);
+                count++;
             }
-            else
-            {
-                if(F)
-                {
-                    // goin down
-                    for(int i=u;i<=d;i++) ans.push_back(m[i][r]);
-                    r--;
-                    H=true;
-                    F=false;
-                }
-                else
-                {
-                    // going up
-                    for(int i=d;i>=u;i--) ans.push_back(m[i][l]);
-                    l++;
-                    H=true;
-                    F=true;
-                }
-            }
+            startingRow++;
             
+            // print ending column
+            for(int i= startingRow; count < total && i <= endingRow; i++){
+                ans.push_back(mat[i][endingCol]);
+                count++;
+            }
+            endingCol--;
+            
+            // print ending row
+            for(int i= endingCol; count < total && i >= startingCol; i--){
+                ans.push_back(mat[endingRow][i]);
+                count++;
+            }
+            endingRow--;
+            
+            // print starting column
+            for(int i= endingRow; count < total && i >= startingRow; i--){
+                ans.push_back(mat[i][startingCol]);
+                count++;
+            }
+            startingCol++;
         }
-        
-        // for(auto &x:ans) cout<<x<<" ";
-        
         return ans;
     }
 };
@@ -65,9 +64,10 @@ int main() {
     while (t--) {
         int r, c;
         cin >> r >> c;
-        vector<vector<int>> matrix(r, vector<int>(c, 0));
+        vector<vector<int>> matrix(r);
 
         for (int i = 0; i < r; i++) {
+            matrix[i].assign(c, 0);
             for (int j = 0; j < c; j++) {
                 cin >> matrix[i][j];
             }
@@ -78,6 +78,9 @@ int main() {
         for (int i = 0; i < result.size(); ++i)
             cout << result[i] << " ";
         cout << endl;
+
+        cout << "~"
+             << "\n";
     }
     return 0;
 }
