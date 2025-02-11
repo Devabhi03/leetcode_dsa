@@ -19,21 +19,21 @@ struct Node {
 // } Driver Code Ends
 class Solution {
   public:
-    // Function to check whether a Binary Tree is BST or not.
-   bool isvalid(Node* root, int prevL, int prevR)
-{
-        if(root==NULL)
-        return true;
-        
-        if(root->data >=prevL || root->data <=prevR)
-        return false;
-        
-        return isvalid(root->left,root->data,prevR) && isvalid(root->right,prevL,root->data);
- }
- bool isBST(Node* root) {
-        int prevL = INT_MAX, prevR = INT_MIN;
-        return isvalid(root,prevL,prevR);
- }
+
+void check(Node* head, int &x , bool &dekh){
+        if(head==NULL) return;
+        check(head->left, x, dekh);
+        if(x>=head->data) dekh=false;
+         x=head->data;
+        check(head->right, x, dekh);
+    }
+    bool isBST(Node* root) {
+        // Your code here
+        bool dekh= true;
+        int x =INT_MIN;
+        check(root, x, dekh);
+        return dekh;
+    }
 };
 
 
@@ -131,6 +131,7 @@ int main() {
 
         else
             cout << "false\n";
+        cout << "~" << endl;
     }
     return 0;
 }
