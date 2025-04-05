@@ -2,41 +2,60 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // } Driver Code Ends
+
 class Solution {
   public:
-    // Function to find the number of islands.
-    void solve(int i, int j, vector<vector<int>> &visited, 
-    vector<vector<char>>&grid, int n, int m){
-        visited[i][j] = 1;
-        int dx[] = {-1,-1,-1,0,0,1,1,1};
-        int dy[] = {-1,0,1,-1,1,-1,0,1};
+    int m;
+    int n;
+    vector<vector<int>> directions{{1,0},{0,1},{-1,0},{0,-1},{0,0},{-1,-1},{1,1},{-1,1},{1,-1}};
+    
+    void bfs(vector<vector<char>>& grid, vector<vector<bool>>& visited, int i, int j) {
         
-        for(int k=0;k<8;k++){
-            int nx = i+dx[k];
-            int ny = j+dy[k];
-            if(nx>=0 && ny>=0 && nx<n && ny<m && grid[nx][ny] == '1' && visited[nx][ny] == 0){
-                solve(nx,ny,visited,grid,n,m);
+        queue<pair<int,int>> q;
+        q.push({i,j});
+        visited[i][j] = true;
+        
+        auto isSafe = [&](int x, int y) {
+            return x < m && x >= 0 && y < n && y >= 0 && grid[x][y] == 'L' && visited[x][y] == false ;
+        };
+        
+        while(!q.empty()){
+            int i = q.front().first;
+            int j = q.front().second;
+            q.pop();
+            
+            for(auto& dir : directions){
+                int x = i + dir[0];
+                int y = j + dir[1];
+                if(isSafe(x,y)){
+                    visited[x][y] = true;
+                    q.push({x,y});
+                }
             }
         }
     }
-    int numIslands(vector<vector<char>>& grid) {
-        // Code here
-        int n = grid.size();
-        int m = grid[0].size();
-        vector<vector<int>>visited(n,vector<int>(m,0));
+    int countIslands(vector<vector<char>>& grid) {
+        
+         m = grid.size();
+         n = grid[0].size();
+        vector<vector<bool>> visited(m,vector<bool>(n,false));
+        
         int count = 0;
-        for(int i=0;i<n;i++){
-            for(int j=0;j<m;j++){
-                if(grid[i][j] == '1' && visited[i][j] == 0){
+        
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                if(grid[i][j] == 'L' && visited[i][j] == false){
+                    bfs(grid,visited,i,j);
                     count++;
-                    solve(i,j,visited,grid,n,m);
                 }
             }
         }
         return count;
     }
 };
+
 
 //{ Driver Code Starts.
 int main() {
@@ -52,8 +71,11 @@ int main() {
             }
         }
         Solution obj;
-        int ans = obj.numIslands(grid);
+        int ans = obj.countIslands(grid);
         cout << ans << '\n';
+
+        cout << "~"
+             << "\n";
     }
     return 0;
 }
