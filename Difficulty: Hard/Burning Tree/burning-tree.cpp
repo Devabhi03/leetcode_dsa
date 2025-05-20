@@ -1,89 +1,6 @@
-//{ Driver Code Starts
-//Initial Template for C++
-
-#include <bits/stdc++.h>
-using namespace std;
-
-struct Node {
-    int data;
-    Node *left;
-    Node *right;
-
-    Node(int val) {
-        data = val;
-        left = right = NULL;
-    }
-};
-
-
-Node *buildTree(string str) {
-    // Corner Case
-    if (str.length() == 0 || str[0] == 'N')
-        return NULL;
-
-    // Creating vector of strings from input
-    // string after spliting by space
-    vector<string> ip;
-
-    istringstream iss(str);
-    for (string str; iss >> str;)
-        ip.push_back(str);
-
-    // Create the root of the tree
-    Node *root = new Node(stoi(ip[0]));
-
-    // Push the root to the queue
-    queue<Node *> queue;
-    queue.push(root);
-
-    // Starting from the second element
-    int i = 1;
-    while (!queue.empty() && i < ip.size()) {
-
-        // Get and remove the front of the queue
-        Node *currNode = queue.front();
-        queue.pop();
-
-        // Get the current Node's value from the string
-        string currVal = ip[i];
-
-        // If the left child is not null
-        if (currVal != "N") {
-
-            // Create the left child for the current Node
-            currNode->left = new Node(stoi(currVal));
-
-            // Push it to the queue
-            queue.push(currNode->left);
-        }
-
-        // For the right child
-        i++;
-        if (i >= ip.size())
-            break;
-        currVal = ip[i];
-
-        // If the right child is not null
-        if (currVal != "N") {
-
-            // Create the right child for the current Node
-            currNode->right = new Node(stoi(currVal));
-
-            // Push it to the queue
-            queue.push(currNode->right);
-        }
-        i++;
-    }
-
-    return root;
-}
-
-
-// } Driver Code Ends
-//User function Template for C++
-
 /*
-struct Node {
+class Node {
+  public:
     int data;
     Node *left;
     Node *right;
@@ -96,74 +13,56 @@ struct Node {
 */
 class Solution {
   public:
-    unordered_map<Node*,Node*> par;
-    unordered_map<Node*,bool> vis;
-    Node *tar  =nullptr;
-    int minTime(Node* root, int target) 
-    {
-        dfs1(root,target);
-        return dfs2(tar)-1;
-    }
-    void dfs1(Node *root,int target){
-        if(root == nullptr){
-            return;
-        }
-        if(root->data == target){
-            tar = root;
-        }
-        if(root->left != nullptr){
-            par[root->left] =root;
-        }if(root->right != nullptr){
-            par[root->right]= root;
-        }
-        dfs1(root->left,target);
-        dfs1(root->right,target);
-    }
-    int dfs2(Node* from){
-        if(from == nullptr){
+     int maxDepth(Node* root){
+        if(root == NULL){
             return 0;
         }
-        int lft = 0, rgt = 0, parent = 0;
-        vis[from] =true;
-        if(vis.find(from->left) == vis.end()){
-            lft = dfs2(from->left);
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+    
+    int travel(Node* root, int &ans, int &target){
+        //if travel returns 0 this means target is not found in that part of the tree
+        if(root == NULL){
+            return 0;
         }
-        if(vis.find(from->right) == vis.end()){
-            rgt = dfs2(from->right);
+        
+        // if the root is the target
+        // we will calculate the maximum depth of the leaf node from the target on left and right side
+        // This can be the potential answer
+        // And return 1 as the target is in this half of the tree
+        if(root->data == target){
+            int lft = maxDepth(root->left);
+            int rgt = maxDepth(root->right);
+            ans = max(lft, rgt);
+            return 1;
         }
-        if(par.find(from) != par.end() && vis.find(par[from]) == vis.end()){
-            parent = dfs2(par[from]);
+        // If target was in the left subtree of the current node
+        // lh will be returning some non-zero value
+        // this will be ideally the distance of the current node with target node
+        int lh = travel(root->left, ans, target);
+        if(lh){
+            // Now we will check for the right subtree depth of the current node
+            // and compare its distance from target + right subtree depth with ans and update the ans 
+            ans = max(ans, lh + maxDepth(root->right));
+            // increment 1 as the current node will added to the distance, as we move upwards towards its parent
+            return 1 + lh;
         }
-        return 1 + max(max(lft, rgt), parent);
+        // If left subtree contains the target, this will be non-zero
+        int rh = travel(root->right, ans, target);
+        // And then we will compare ans variable with current distance + max depth of the left subtree of the current node
+        if(rh){
+            ans = max(ans, rh + maxDepth(root->left));
+            // And we will add 1 to the current distance as for its parent node, the current node will also be part of the path
+            return 1 + rh;
+        }
+        // if target is not found return 0
+        return 0;
+    }
+    
+    int minTime(Node* root, int target) {
+        // This will be carry the time taken to burn the farthest node 
+        int ans = 0;
+        travel(root, ans, target);
+        return ans;
     }
 };
-
-
-//{ Driver Code Starts.
-
-int main() 
-{
-    int tc;
-    scanf("%d ", &tc);
-    while (tc--) 
-    {    
-        string treeString;
-        getline(cin, treeString);
-        // cout<<treeString<<"\n";
-        int target;
-        cin>>target;
-        // cout<<target<<"\n";
-
-        Node *root = buildTree(treeString);
-        Solution obj;
-        cout<<obj.minTime(root, target)<<"\n"; 
-
-        cin.ignore();
-
-    }
-
-
-    return 0;
-}
-
-// } Driver Code Ends
