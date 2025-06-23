@@ -1,104 +1,44 @@
-//{ Driver Code Starts
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
-// User function template for C++
-
 class Solution {
   public:
+    string addStrings(const string &a, const string &b) {
+        int i = a.size() - 1, j = b.size() - 1, carry = 0;
+        stringstream ss;
+    
+        while (i >= 0 || j >= 0 || carry) {
+            int digitA = i >= 0 ? a[i--] - '0' : 0;
+            int digitB = j >= 0 ? b[j--] - '0' : 0;
+            int sum = digitA + digitB + carry;
+            ss << char((sum % 10) + '0');
+            carry = sum / 10;
+        }
+    
+        string result = ss.str();
+        reverse(result.begin(), result.end());
+
+        int k = 0;
+        while (k < result.size() - 1 && result[k] == '0') k++;
+        return result.substr(k);
+    }
+    
     string minSum(vector<int> &arr) {
-        int n = arr.size();
-        if(n == 1) 
-           return to_string(arr[0]);
-          
-        // Sort the array : as we have to find the min sum
-        sort(arr.begin(), arr.end());
-        
-        // First num starting digit will be arr[0] and second num starting digit will be arr[1]
-        string a = to_string(arr[0]),
-        b = to_string(arr[1]);
-        
-        // Add digits in both
-        for(int i=2; i<n; i+=2){
-            a += to_string(arr[i]);
+        int freq[10] = {0};
+        for (int digit : arr) ++freq[digit];
+    
+        string num1, num2;
+        num1.reserve(arr.size() / 2 + 1);
+        num2.reserve(arr.size() / 2 + 1);
+    
+        bool toggle = true;
+        for (int d = 0; d <= 9; ++d) {
+            while (freq[d]--) {
+                if (toggle)
+                    num1.push_back('0' + d);
+                else
+                    num2.push_back('0' + d);
+                toggle = !toggle;
+            }
         }
-        for(int i=3; i<n; i+=2){
-            b += to_string(arr[i]);
-        }
-        
-        // Reverse : as we have to add them
-        reverse(a.begin(), a.end());
-        reverse(b.begin(), b.end());
-        
-        // Add both numbers
-        int m = min(a.size(), b.size());
-        string res = "";
-        int i = 0, carry = 0;
-        for(; i<m; i++){
-            int cur = (a[i] - '0') + (b[i] - '0') + carry;
-            carry = cur / 10;
-            int num = cur % 10;
-            res += to_string(num);
-        }
-        
-        // Add remaining digits of num a
-        int j = i;
-        while(i < a.size()){
-            int cur = (a[i] - '0') + carry;
-            carry = cur / 10;
-            int num = cur % 10;
-            res += to_string(num);
-            i++;
-        }
-        
-        // Add remaining digits of num b
-        while(j < b.size()){
-            int cur = (b[i] - '0') + carry;
-            carry = cur / 10;
-            int num = cur % 10;
-            res += to_string(num);
-            j++;
-        }
-        
-        // Add one digit for carry if it is not zero
-        if(carry)
-            res += to_string(carry);
-        
-        // Reverse the result to find the original sum
-        reverse(res.begin(), res.end());
-        
-        // Skip the leading zeros
-        i = 0;
-        while(i < res.size() && res[i] == '0') i++;
-        string ans = res.substr(i);
-        return ans;
+    
+        return addStrings(num1, num2);
     }
 };
-
-//{ Driver Code Starts.
-
-int main() {
-    int t;
-    cin >> t;
-    cin.ignore();
-    while (t--) {
-        vector<int> a;
-        string input;
-        getline(cin, input);
-        stringstream ss(input);
-        int number;
-        while (ss >> number) {
-            a.push_back(number);
-        }
-
-        Solution ob;
-        string ans = ob.minSum(a);
-        cout << ans << endl;
-        cout << "~" << endl;
-    }
-    return 0;
-}
-
-// } Driver Code Ends
