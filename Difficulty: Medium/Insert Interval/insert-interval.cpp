@@ -1,70 +1,40 @@
-//{ Driver Code Starts
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
-// User function Template for C++
-
 class Solution {
   public:
     vector<vector<int>> insertInterval(vector<vector<int>> &intervals,
                                        vector<int> &newInterval) {
         // code here
-
-
-        // add the new interval and sort the array of intervals acc to start.
-        intervals.push_back({newInterval[0], newInterval[1]});
-        sort(intervals.begin(), intervals.end());
         
-        // now apply the logic of merging overlapping intervals
-        int n = intervals.size();
-        int prev = 0;
-        for(int i=1 ; i<n ; i++) {
-            if(intervals[i][0] <= intervals[prev][1]) {
-                intervals[prev][0] = min(intervals[prev][0], intervals[i][0]);
-                intervals[prev][1] = max(intervals[prev][1], intervals[i][1]);
+        vector<vector<int>>ans;
+        bool isInserted = false;
+        
+        for (int i=0; i<intervals.size(); i++) {
+            if (!isInserted && newInterval[0] < intervals[i][0]) {
+                 ans.push_back(newInterval);
+                 ans.push_back(intervals[i]);
+                 isInserted = true;
             } else {
-                prev++;
-                intervals[prev][0] = intervals[i][0];
-                intervals[prev][1] = intervals[i][1];
+                ans.push_back(intervals[i]);
             }
         }
-        for(int i=n-1 ; i>prev ; i--) {
-            intervals.pop_back();
+        
+        if (!isInserted) {
+               ans.push_back(newInterval);
         }
-        return intervals;
+        vector<vector<int>>ansFinal;
+        ansFinal.push_back(ans[0]);
+        
+        int res = 0;
+        
+        for (int i=1; i<ans.size(); i++) {
+            if (ans[i][0] <= ansFinal[res][1]) {
+                ansFinal[res][0] = min(ansFinal[res][0], ans[i][0]);
+                ansFinal[res][1] = max(ansFinal[res][1], ans[i][1]);
+            } else {
+                ansFinal.push_back(ans[i]);
+                res++;
+            }
+        }
+        
+        return ansFinal;
     }
 };
-
-//{ Driver Code Starts.
-
-int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int N;
-        cin >> N;
-        vector<vector<int>> intervals(N, vector<int>(2));
-        for (int i = 0; i < N; i++) {
-            cin >> intervals[i][0] >> intervals[i][1];
-        }
-        vector<int> newInterval(2);
-        cin >> newInterval[0] >> newInterval[1];
-
-        Solution obj;
-        vector<vector<int>> ans = obj.insertInterval(intervals, newInterval);
-        cout << "[";
-        for (int i = 0; i < ans.size(); i++) {
-            cout << "[" << ans[i][0] << ',' << ans[i][1] << ']';
-            if (i != (ans.size() - 1))
-                cout << ",";
-        }
-        cout << "]" << endl;
-
-        cout << "~"
-             << "\n";
-    }
-    return 0;
-}
-// } Driver Code Ends
