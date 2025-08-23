@@ -1,77 +1,31 @@
-//{ Driver Code Starts
-// Initial function template for C++
-
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
 class Solution {
   public:
-  bool isPossible(vector<int>&arr,int k,int mid){
-      int cnt=1;
-      int sum=0;
-      for(int i=0;i<arr.size();i++){
-          if(sum+arr[i]>mid){
-              sum=arr[i];
-              cnt++;
-          }
-          else
-          sum+=arr[i];
-      }
-      return cnt<=k;
-  }
-    int findPages(vector<int> &arr, int k) {
-        if(k>arr.size())
-        return -1;
-       int low=*max_element(arr.begin(),arr.end());
-       int high=accumulate(arr.begin(),arr.end(),0);
-       int ans=-1;
-       while(low<=high){
-           int mid=(low+high)/2;
-           if(isPossible(arr,k,mid)){
-           high=mid-1;
-              ans=mid;
-           }
-           else
-               low=mid+1;
-       }
-       return ans;
-    }
-};
-
-//{ Driver Code Starts.
-
-int main() {
-    int test_case;
-    cin >> test_case;
-    cin.ignore();
-    while (test_case--) {
-
-        int d;
-        vector<int> arr, brr, crr;
-        string input;
-        getline(cin, input);
-        stringstream ss(input);
-        int number;
-        while (ss >> number) {
-            arr.push_back(number);
+    int canAllocate(int maxPage, const vector<int>& arr, int k) {
+    int currStud = 1, pages = 0;
+    for (int pagesInBook : arr) {
+        if (pagesInBook > maxPage) return false; // 💡 key fix for optimized range
+        if (pages + pagesInBook <= maxPage)
+            pages += pagesInBook;
+        else {
+            currStud++;
+            pages = pagesInBook;
         }
-        getline(cin, input);
-        ss.clear();
-        ss.str(input);
-        while (ss >> number) {
-            crr.push_back(number);
-        }
-        d = crr[0];
-        int n = arr.size();
-        Solution ob;
-        int ans = ob.findPages(arr, d);
-        cout << ans << endl;
-
-        cout << "~"
-             << "\n";
     }
-    return 0;
+    return currStud <= k;
 }
-// } Driver Code Ends
+
+int findPages(vector<int>& arr, int k) {
+    if (arr.size() < k) return -1;
+    int totalPage = accumulate(arr.begin(), arr.end(), 0);
+    int low = totalPage / k;
+
+    while (low <= totalPage) {
+        int mid = low + (totalPage - low) / 2;
+        if (canAllocate(mid, arr, k))
+            totalPage = mid - 1;
+        else
+            low = mid + 1;
+    }
+    return low;
+}
+};
