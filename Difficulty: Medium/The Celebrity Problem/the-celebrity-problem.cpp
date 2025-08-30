@@ -1,50 +1,26 @@
-//{ Driver Code Starts
-// Initial template for C++
-
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
-// User function template for C++
-
 class Solution {
   public:
-    // Function to find if there is a celebrity in the party or not.
-    int celebrity(vector<vector<int> >& mat) {
-        int n=mat.size();
-        int top=0, bot=n-1;
-        while(top<bot){
-            if (mat[top][bot]) top++;
-            else bot--;
+    int celebrity(vector<vector<int>>& mat) {
+    int n = mat.size();
+    int cand = 0;
+
+    // Step 1: Find potential candidate
+    for (int i = 1; i < n; i++) {
+        if (mat[cand][i] == 1) {
+            // cand knows i -> cand can't be celebrity
+            cand = i;
         }
-        for(int i=0; i<n; i++){
-            if(i!=top){
-                if (mat[top][i] || !mat[i][top]) return -1;
-            }
+    }
+
+    // Step 2: Verify candidate
+    for (int i = 0; i < n; i++) {
+        if (i != cand) {
+            // Celebrity should not know i
+            if (mat[cand][i] == 1) return -1;
+            // Everyone should know celebrity
+            if (mat[i][cand] == 0) return -1;
         }
-        return top;
+    }
+    return cand;
     }
 };
-
-
-//{ Driver Code Starts.
-
-int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int n;
-        cin >> n;
-        vector<vector<int> > M(n, vector<int>(n, 0));
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                cin >> M[i][j];
-            }
-        }
-        Solution ob;
-        cout << ob.celebrity(M) << endl;
-    }
-}
-
-// } Driver Code Ends
