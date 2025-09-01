@@ -1,13 +1,18 @@
 class Solution:
-    def maxAverageRatio(self, cls: List[List[int]], extra: int) -> float:
-        cls = [(p/t - (p+1)/(t+1), p, t) for p, t in cls]
-        heapify(cls)
+    def maxAverageRatio(self, classes: List[List[int]], k: int) -> float:
+        n=len(classes)
+        sum=0
+        A=[]
+        for p,q in classes:
+            sum+=p/q
+            A.append(((p-q)/(q*(q+1)), p, q)) # change sign
 
-        if cls[0][0] == 0:
-            return 1
+        heapify(A)
 
-        for _ in range(extra):
-            _, p, t = heappop(cls)
-            heappush(cls, ((p+1)/(t+1) - (p+2)/(t+2), p+1, t+1))
-
-        return sum(p/t for _, p, t in cls) / len(cls)
+        for _ in range(k):
+            (r, p, q)=A[0]
+            if r==0: break
+            sum-=r # change sign
+            r2=(p-q)/((q +1.0)* (q + 2.0))
+            heapreplace(A, (r2, p+1, q+1))
+        return sum/n
