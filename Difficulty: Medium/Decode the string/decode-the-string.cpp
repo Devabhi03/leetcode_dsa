@@ -1,67 +1,34 @@
-//{ Driver Code Starts
-// Initial Template for C++
-
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
-
-
 class Solution {
-   public:
-    string decodedString(string &s) {
+  public:
+     string decodedString(string &s) {
         // code here
-        stack<int>st;   // count Stack
-        stack<string>stt;  // String stack
-        string currVal="";
-        int count=0;
+        string ans;
         
-        for(int i=0;i<s.length();i++){
-            char ch=s[i];
-            
-            if(isdigit(ch)){
-                count=count*10+(ch-'0');
-            }else if(ch=='['){
-                st.push(count);
-                stt.push(currVal);
-                currVal="";
-                count=0;
-            }else if(ch==']'){ 
-                int x =st.top();  // x= repeatTimes
-                st.pop();
-                
-                string y=stt.top();  // y=decode
-                stt.pop();
-                
-                for(int j=0;j<x;j++){
-                    y+=currVal;
+        for(char c : s){
+            if(c!=']') ans +=c;
+            else{
+                string word;
+                while(ans.back()!='['){
+                    word= ans.back() + word;
+                    ans.pop_back();
                 }
-                currVal=y;
-            }else{
-                currVal+=ch;
+                
+                ans.pop_back();
+                string k; 
+                
+                while(!ans.empty() && isdigit(ans.back())){
+                    k = ans.back() + k;
+                    ans.pop_back();
+                }
+                
+                int num=stoi(k);
+                
+                while(num--){
+                    ans.append(word);
+                }
             }
         }
-        return currVal;
+        
+        return ans;
     }
 };
-
-
-//{ Driver Code Starts.
-
-int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        string s;
-        cin >> s;
-
-        Solution ob;
-        cout << ob.decodedString(s) << "\n";
-
-        cout << "~"
-             << "\n";
-    }
-    return 0;
-}
-// } Driver Code Ends
