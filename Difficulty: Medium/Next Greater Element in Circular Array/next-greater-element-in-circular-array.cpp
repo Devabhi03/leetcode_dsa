@@ -1,30 +1,25 @@
 class Solution {
-  public:
-    vector<int> nextLargerElement(vector<int> &arr) 
-    {
-        int N = arr.size();
-        vector<int> NGE(N,0);
-        stack<int> st;
-        int i = (2*N)-1;
-        
-        while(i >= 0)
-        {
-            while(st.size() and st.top() <= arr[i%N])
-            {
-                st.pop();
-            }
-            if(i < N)
-            {
-                NGE[i] = st.size() ? st.top(): -1;
-            }
-            st.push(arr[i%N]);
-            i--;
+   public:
+    vector<int> nextGreater(vector<int> &arr) {
+        int n = arr.size();
+    vector<int> result(n, -1);
+    stack<int> st; // stores indices
+
+    // Traverse the array twice to simulate circular behavior
+    for (int i = 0; i < 2 * n; i++) {
+        int num = arr[i % n];
+
+        // Check if this num is the NGE for elements in stack
+        while (!st.empty() && arr[st.top()] < num) {
+            result[st.top()] = num;
+            st.pop();
         }
-        
-        return NGE;
-        // code here
-        
+
+        // Only push index during first pass
+        if (i < n) {
+            st.push(i);
+        }
     }
-
-
+    return result;
+    }
 };
