@@ -1,29 +1,30 @@
 class Solution:
     def countUnguarded(self, m: int, n: int, guards: List[List[int]], walls: List[List[int]]) -> int:
-        # Initialize grid with zeros
-        g = [[0] * n for _ in range(m)] # g - 2D grid/matrix
-        
-        # Mark guards and walls as 2
-        for x, y in guards:  # gx, gy -  guard's position 
-            g[x][y] = 2    
-        for x, y in walls:
-            g[x][y] = 2
-            
-        # Directions: up, right, down, left
-        dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-        
-        # Process each guard's line of sight
-        for gx, gy in guards:
-            for dx, dy in dirs: # dx, dy - movement direction offsets
-                x, y = gx, gy
+        def idx(r, c):
+            return r*n+c
+        d=(0, 1, 0,-1, 0)
+        def cross(r, c):
+            nonlocal comp
+            for a in range(4):
+                di, dj=d[a], d[a+1]
+                i, j=r+di, c+dj
                 while True:
-                    x += dx
-                    y += dy
-                    # Check cells in current direction until hitting boundary or obstacle
-                    if x < 0 or x >= m or y < 0 or y >= n or g[x][y] == 2:
+                    pos=idx(i, j)
+                    if i<0 or i>=m or j<0 or j>=n or grid[pos]=='X':
                         break
-                    g[x][y] = 1
-        
-        # Count unguarded cells (cells with value 0)
-        return sum(row.count(0) for row in g)
-        
+                    comp-=grid[pos]==' '
+                    grid[pos]='V'
+                    i+=di
+                    j+=dj
+        comp=m*n
+        grid=[' ']*(m*n)
+
+        for ij in walls:
+            grid[idx(ij[0], ij[1])]='X'
+            comp-=1
+        for ij in guards:
+            grid[idx(ij[0], ij[1])]='X'
+            comp-=1
+        for ij in guards:
+            cross(ij[0], ij[1])
+        return comp             
