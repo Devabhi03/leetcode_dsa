@@ -1,16 +1,17 @@
 class Solution {
 public:
-    long long maximumHappinessSum(vector<int>& happiness, int k) {
-        ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-        sort(begin(happiness), end(happiness), greater<int>());
-        int i = 0;
-        long long res = 0;
-
-        while(k--) {
-            happiness[i] = max(happiness[i] - i, 0);
-            res += happiness[i++];
+    long long maximumHappinessSum(vector<int>& christmasJoy, int gifts) {
+        // Santa gives gifts to the happiest children first
+        sort(christmasJoy.begin(), christmasJoy.end(), greater<int>());
+        
+        long long totalJoy = 0;
+        for (int turn = 0; turn < gifts; ++turn) {
+            int currentJoy = christmasJoy[turn] - turn;
+            if (currentJoy <= 0)
+                break;
+            totalJoy += currentJoy;
         }
-
-        return res;
+        
+        return totalJoy;
     }
 };
